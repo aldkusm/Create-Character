@@ -1,0 +1,130 @@
+// =======================
+// DATA
+// =======================
+
+const roles = [
+
+    // Combat
+    "Warrior",
+    "Mage",
+    "Assassin",
+    "Healer",
+    "Tank",
+    "Archer",
+    "Necromancer",
+    "Paladin",
+    "Berserker",
+    "Spearman",
+    "Knight",
+    "Samurai",
+    "Ninja",
+    "Gunslinger",
+    "Battle Priest",
+    "Dark Knight",
+    "Spellblade",
+    "Summoner",
+    "Beast Tamer",
+    "Dragon Slayer",
+
+    // Economy
+    "Trader",
+    "Merchant",
+    "Blacksmith",
+    "Alchemist",
+    "Chef",
+    "Inn Keeper",
+    "Dungeon Broker",
+    "Treasure Appraiser",
+    "Potion Seller",
+    "Artifact Dealer",
+
+    // Government
+    "President",
+    "Vice President",
+    "Minister of Defense",
+    "Minister of Finance",
+    "Governor",
+    "Mayor",
+    "Royal Advisor",
+    "Tax Collector",
+    "National Strategist",
+    "Dungeon Affairs Minister",
+
+    // Royal
+    "King",
+    "Queen",
+    "Prince",
+    "Princess",
+    "Emperor",
+    "Empress",
+    "Crown Prince",
+    "Royal Guard Commander",
+
+    // Secret
+    "Spy",
+    "Double Agent",
+    "Secret Agent",
+    "Intelligence Officer",
+    "Dungeon Investigator",
+    "Shadow Operative",
+
+    // Normal jobs
+    "Teacher",
+    "Doctor",
+    "Engineer",
+    "Programmer",
+    "Farmer",
+    "Police Officer",
+    "Soldier",
+    "Journalist",
+    "Lawyer",
+    "Civil Servant",
+
+    // Indonesian meme
+    "Indonesian Citizen",
+    "Neighborhood Chief",
+    "Village Chief",
+    "Parking Attendant",
+    "Instant Noodle Connoisseur",
+    "Motorcycle Gang Leader",
+    "Local Hero",
+    "Professional Queue Cutter",
+
+    // Funny
+    "Boyfriend",
+    "Girlfriend",
+    "Professional Sleeper",
+    "Full-Time Gambler",
+    "Professional Procrastinator",
+    "Unemployed",
+    "Dungeon Tourist",
+    "Treasure Accident Finder",
+    "Goblin Negotiator",
+    "Monster Influencer",
+    "Dungeon YouTuber",
+    "Meme Lord",
+    "Keyboard Warrior",
+    "Professional NPC",
+    "Background Character",
+    "Main Character",
+    "Side Character",
+    "Comic Relief",
+    "Plot Armor User",
+
+    // Extremely absurd
+    "World Destroyer",
+    "Professional Villain",
+    "Demon King's Intern",
+    "Hero Association Janitor",
+    "Legendary Fisherman",
+    "Chicken Whisperer",
+    "Goblin Rights Activist",
+    "Certified Door Kicker",
+    "Dungeon Tax Evasion Expert",
+    "Professional Loot Goblin",
+    "Walking Disaster",
+    "Harbinger of Chaos",
+    "Ancient Coffee Addict",
+    "Supreme Couch Guardian",
+    "Master of Bad Decisions"
+];

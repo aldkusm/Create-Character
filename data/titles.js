@@ -1,0 +1,91 @@
+const titles = [
+
+    // Basic
+    "Beginner Adventurer",
+    "Novice Explorer",
+    "Wandering Merchant",
+    "Monster Hunter",
+    "Dungeon Explorer",
+    "Treasure Seeker",
+    "Guild Recruit",
+    "Rookie Adventurer",
+    "Village Protector",
+    "Traveling Hero",
+
+    // Combat
+    "The Merciless",
+    "Dragon Slayer",
+    "King's Guardian",
+    "Shadow Reaper",
+    "The Executioner",
+    "Champion of War",
+    "Blade Saint",
+    "Conqueror of Dungeons",
+    "The Last Defender",
+    "Hero of a Thousand Battles",
+
+    // Magic
+    "Archmage of Eternity",
+    "Master of Elements",
+    "Bearer of Divine Light",
+    "The Cursed One",
+    "The Forbidden Mage",
+    "Keeper of Ancient Secrets",
+    "Chosen by Mana",
+    "The Time Weaver",
+    "Lord of Darkness",
+    "The Reality Bender",
+
+    // Royal
+    "The Chosen One",
+    "Hero of Light",
+    "Crown Prince",
+    "King of Kings",
+    "Emperor of Humanity",
+    "The Forgotten King",
+    "The Eternal Monarch",
+    "Ruler of the Seven Kingdoms",
+
+    // Government
+    "President of the Republic",
+    "Minister of Dungeon Affairs",
+    "Supreme Tax Collector",
+    "Guardian of the Nation",
+    "National Hero",
+    "The People's Champion",
+
+    // Funny
+    "Professional Sleeper",
+    "Master of Procrastination",
+    "Certified Couch Guardian",
+    "Lord of Instant Noodles",
+    "The Unemployed Legend",
+    "Professional NPC",
+    "The Main Character",
+    "Background Character No. 37",
+    "Goblin Negotiator",
+    "Dungeon Tourist",
+    "The One Who Forgot the Quest",
+    "Master of Bad Decisions",
+    "CEO of Laziness",
+    "King of Overthinking",
+    "The Legendary Queue Cutter",
+
+    // Overpower
+    "Harbinger of Doom",
+    "Bringer of Chaos",
+    "Destroyer of Worlds",
+    "The Unkillable",
+    "The Immortal One",
+    "Walker Between Dimensions",
+    "The Fate Breaker",
+    "God's Favorite Child",
+    "The Plot Armor Incarnate",
+    "Supreme Being",
+    "The End of All Things",
+    "Lord of RNG",
+    "The Chosen by Gacha",
+    "The Error in Reality",
+    "The Final Boss",
+    "The One Above All"
+];

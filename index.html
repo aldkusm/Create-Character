@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG Gacha Status</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container">
+
+        <div class="setup-box">
+
+            <h1 id="setupTitle">CREATE CHARACTER</h1>
+            <p class="subtitle" id="setupSubtitle">Create a unique character and begin a new adventure.</p>
+            <p class="title-link"><a href="https://aldkusm.github.io/Create-Character/" target="_blank" rel="noopener noreferrer">aldkusm.github.io/Create-Character/</a></p>
+
+            <div class="input-group">
+                <label id="labelCharacterName">Character Name</label>
+                <div class="input-field">
+                    <div class="input-icon"><img src="assets/Icon/Character_Name.png" alt="Character icon"></div>
+                    <input
+                        type="text"
+                        id="charName"
+                        placeholder="Enter character name">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label id="labelGuildName">Guild Name</label>
+                <div class="input-field">
+                    <div class="input-icon"><img src="assets/Icon/Guild_Name.png" alt="Guild icon"></div>
+                    <input
+                        type="text"
+                        id="guildName"
+                        placeholder="Enter guild name">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label id="labelChooseRace">Choose Race</label>
+                <div class="input-field">
+                    <div class="input-icon"><img src="assets/Icon/Race.png" alt="Race icon"></div>
+                    <select id="raceSelect"></select>
+                </div>
+                <div class="race-box">
+                    <div class="race-box-icon"><img src="assets/Icon/Stat_Bonus.png" alt="Bonus icon"></div>
+                    <p id="raceDescription" class="race-description">Select a race to view bonus description.</p>
+                </div>
+            </div>
+
+            <button id="gachaBtn">
+                <span class="btn-icon">🎲</span>
+                <span class="btn-label" id="gachaLabel">Gacha Character</span>
+                <span class="btn-star star-1">★</span>
+                <span class="btn-star star-2">★</span>
+                <span class="btn-star star-3">★</span>
+            </button>
+
+            <div class="lang-switch">
+                <button type="button" id="btnEnglish" class="lang-btn active">English</button>
+                <button type="button" id="btnIndonesian" class="lang-btn">Indonesia</button>
+            </div>
+
+        </div>
+
+
+        <div class="card hidden">
+
+
+
+            <h1 id="statusTitle">STATUS</h1>
+
+            <div class="basic-info">
+
+                <div class="left">
+                    <p class="info-item">
+                        <span class="info-icon"><img src="assets/Icon/Character_Name.png" alt="Name icon"></span>
+                        <span class="info-text">
+                            <span class="info-label" id="labelName">Name</span>
+                            <span id="displayName" class="info-value">-</span>
+                        </span>
+                    </p>
+                    <p class="info-item">
+                        <span class="info-icon"><img src="assets/Icon/Race.png" alt="Race icon"></span>
+                        <span class="info-text">
+                            <span class="info-label" id="labelRace">Race</span>
+                            <span id="displayRace" class="info-value">-</span>
+                        </span>
+                    </p>
+                    <p class="info-item race-description">
+                        <span class="info-icon"><img src="assets/Icon/Description.png" alt="Description icon"></span>
+                        <span class="info-text">
+                            <span class="info-label" id="labelDescription">Description</span>
+                            <span id="displayRaceDesc" class="info-value">-</span>
+                        </span>
+                    </p>
+                    <p class="info-item">
+                        <span class="info-icon"><img src="assets/Icon/Skill_Character.png" alt="Role icon"></span>
+                        <span class="info-text">
+                            <span class="info-label" id="labelRole">Role</span>
+                            <span id="displayRole" class="info-value">-</span>
+                        </span>
+                    </p>
+                </div>
+
+                <div class="right">
+                    <p class="info-item">
+                        <span class="info-icon"><img src="assets/Icon/Level.png" alt="Level icon"></span>
+                        <span class="info-text">
+                            <span class="info-label" id="labelLevel">Lv</span>
+                            <span id="displayLevel" class="info-value">1</span>
+                        </span>
+                    </p>
+                    <p class="info-item">
+                        <span class="info-icon"><img src="assets/Icon/Guild_Name.png" alt="Guild icon"></span>
+                        <span class="info-text">
+                            <span class="info-label" id="labelGuild">Guild</span>
+                            <span id="displayGuild" class="info-value">-</span>
+                        </span>
+                    </p>
+                    <p class="info-item">
+                        <span class="info-icon"><img src="assets/Icon/Rank.png" alt="Rank icon"></span>
+                        <span class="info-text">
+                            <span class="info-label" id="labelRank">Rank</span>
+                            <span class="info-value"><span id="displayRank" class="rank rank-b">B</span></span>
+                        </span>
+                    </p>
+                </div>
+
+            </div>
+
+            <hr>
+
+            <div class="stats">
+
+                <div class="stat-box stat-strength">
+                    <div class="stat-icon"><img src="assets/Icon/Strength.png" alt="Strength icon"></div>
+                    <div class="stat-meta">
+                        <span class="stat-type" id="labelStrength">Strength</span>
+                        <strong id="strength">0</strong>
+                    </div>
+                    <div class="stat-bar"><div class="stat-bar-fill" id="strengthBar"></div></div>
+                </div>
+
+                <div class="stat-box stat-health">
+                    <div class="stat-icon"><img src="assets/Icon/Health.png" alt="Health icon"></div>
+                    <div class="stat-meta">
+                        <span class="stat-type" id="labelHealth">Health</span>
+                        <strong id="health">0</strong>
+                    </div>
+                    <div class="stat-bar"><div class="stat-bar-fill" id="healthBar"></div></div>
+                </div>
+
+                <div class="stat-box stat-mana">
+                    <div class="stat-icon"><img src="assets/Icon/Mana.png" alt="Mana icon"></div>
+                    <div class="stat-meta">
+                        <span class="stat-type" id="labelMana">Mana</span>
+                        <strong id="mana">0</strong>
+                    </div>
+                    <div class="stat-bar"><div class="stat-bar-fill" id="manaBar"></div></div>
+                </div>
+
+                <div class="stat-box stat-agility">
+                    <div class="stat-icon"><img src="assets/Icon/Agility.png" alt="Agility icon"></div>
+                    <div class="stat-meta">
+                        <span class="stat-type" id="labelAgility">Agility</span>
+                        <strong id="agility">0</strong>
+                    </div>
+                    <div class="stat-bar"><div class="stat-bar-fill" id="agilityBar"></div></div>
+                </div>
+
+            </div>
+
+            <hr>
+
+            <div class="section">
+                <div class="section-header">
+                    <h2 id="skillsTitle">Skills</h2>
+                    <button type="button" class="reroll-skills" id="rerollSkillsBtn">Reroll Skills</button>
+                </div>
+
+                <ul class="list" id="skillList">
+
+                </ul>
+
+            </div>
+
+            <hr>
+
+            <div class="section">
+                <div class="section-header">
+                    <h2 id="titleTitle">Title</h2>
+                    <button type="button" class="reroll-skills" id="rerollTitlesBtn">Reroll Title</button>
+                </div>
+                <ul class="list" id="titleList">
+
+                </ul>
+            </div>
+            <p class="status-footer-link"><a href="https://aldkusm.github.io/Create-Character/" target="_blank" rel="noopener noreferrer">aldkusm.github.io/Create-Character/</a></p>
+        </div>
+
+
+    </div>
+
+    <script src="data/races.js"></script>
+    <script src="data/roles.js"></script>
+    <script src="data/skills.js"></script>
+    <script src="data/titles.js"></script>
+    <script src="data/weightedrank.js"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>
