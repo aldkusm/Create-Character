@@ -29,7 +29,6 @@ body::before{
     background-size: cover, cover, cover;
     background-position: center, center, center;
     background-repeat: no-repeat, no-repeat, no-repeat;
-    filter: blur(1px);
     opacity:0.85;
     pointer-events:none;
     z-index:-1;
@@ -776,10 +775,13 @@ hr{
     transition:transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
 }
 
-.lang-btn.active,
+.lang-btn.active{
+    background: #4d72ff;
+    border-color: #4d72ff;
+    transform: translateY(-1px);
+}
+
 .lang-btn:hover{
-    background: rgba(255,255,255,0.16);
-    border-color: rgba(255,255,255,0.32);
     transform: translateY(-1px);
 }
 
@@ -1149,7 +1151,7 @@ hr{
 @media(max-width:600px){
 
     body{
-        padding:15px;
+        padding:8px;
     }
 
     .container{
@@ -1157,55 +1159,61 @@ hr{
     }
 
     .setup-box{
-        padding:20px;
-        margin-bottom:15px;
+        padding:12px;
+        margin-bottom:8px;
     }
 
     .setup-box h1{
-        font-size:8px;
-        margin-bottom:15px;
-    }
-
-    .title-link{
-        font-size:8px;
-        margin:8px 0 16px;
-    }
-
-    .input-group{
+        font-size:24px;
         margin-bottom:10px;
     }
 
+    .title-link{
+        font-size:14px;
+        margin:4px 0 10px;
+    }
+
+    .subtitle{
+        font-size:13px;
+        margin-bottom:12px;
+    }
+
+    .input-group{
+        margin-bottom:8px;
+    }
+
     .input-group label{
-        font-size:5px;
+        font-size:13px;
         margin-bottom:4px;
     }
 
     .input-group input,
     .input-group select{
         padding:4px;
-        font-size:5px;
+        font-size:13px;
     }
 
     .input-field input::placeholder{
-        font-size:10px;
+        font-size:13px;
     }
 
     .input-field select{
-        font-size:10px;
+        font-size:13px;
     }
 
     .race-description {
-        font-size:9px;
-        margin-top:6px;
+        font-size:13px;
+        margin-top:4px;
     }
 
     .basic-info{
         flex-direction:column;
-        gap:16px;
+        gap:8px;
     }
 
     .basic-info .info-item{
         width:100%;
+        margin-bottom:4px;
     }
 
     .basic-info .info-text{
@@ -1215,6 +1223,11 @@ hr{
     .basic-info .info-label{
         min-width:0;
         white-space:normal;
+        font-size:13px;
+    }
+
+    .basic-info .info-value{
+        font-size:15px;
     }
 
     .basic-info .race-description .info-value{
@@ -1223,107 +1236,134 @@ hr{
 
     .stats{
         grid-template-columns:1fr;
+        gap:10px;
     }
 
     .section .section-header{
         flex-direction:column;
         align-items:flex-start;
+        margin-bottom:8px;
     }
 
     .reroll-skills{
         width:100%;
         text-align:center;
+        font-size:13px;
+        padding:8px 12px;
     }
 
     .lang-switch{
         flex-wrap:wrap;
         justify-content:center;
+        margin-top:12px;
+    }
+
+    .lang-btn{
+        font-size:13px;
+        padding:8px 12px;
     }
 
     #gachaBtn{
         padding:8px;
-        font-size:10px;
-        margin-bottom:10px;
+        font-size:14px;
+        margin-bottom:8px;
     }
 
     .card{
-        padding:15px;
+        padding:12px;
     }
 
     .card h1{
-        font-size:11px;
-        margin-bottom:15px;
+        font-size:22px;
+        margin-bottom:12px;
     }
 
     .basic-info p{
-        font-size:7px;
-        margin-bottom:8px;
+        font-size:13px;
+        margin-bottom:4px;
     }
 
     .stat-box{
         padding:8px;
+        grid-template-columns:50px 1fr;
+    }
+
+    .stat-box .stat-icon{
+        width:50px;
+        height:50px;
     }
 
     .stat-box span{
-        font-size:5px;
-        margin-bottom:4px;
+        font-size:13px;
+        margin-bottom:2px;
+    }
+
+    .stat-box .stat-type{
+        font-size:12px;
     }
 
     .stat-box strong{
-        font-size:11px;
+        font-size:18px;
     }
 
     .section h2{
-        font-size:11px;
-        margin-bottom:10px;
+        font-size:18px;
+        margin-bottom:8px;
+    }
+
+    .item-label{
+        font-size:14px;
     }
 
     .list li{
-        padding:7px 0;
-        font-size:6px;
+        padding:5px 0;
+        font-size:14px;
+        margin-bottom:4px;
     }
 
     .rank{
-        padding:2px 6px;
-        font-size:5px;
+        padding:4px 8px;
+        font-size:12px;
+    }
+
+    .download-text{
+        font-size:13px;
+        padding:8px 4px;
+        margin-top:15px;
     }
 
     .status-footer-link{
-        font-size:5px;
+        font-size:12px;
+        margin:8px 0 12px;
     }
 
     hr{
-        margin:15px 0;
+        margin:10px 0;
     }
 
 }
 
 .setup-box{
-
     background:rgba(255,255,255,.06);
-
     backdrop-filter:blur(10px);
-
     border-radius:25px;
-
     padding:35px;
-
     margin-bottom:25px;
-
-    border:1px solid rgba(255,255,255,.15);
-    
+    border:2px solid rgba(77, 114, 255, 0.6);
     animation:slideUp 0.7s ease-out, fadeIn 0.8s ease-out;
     box-shadow:
         0 8px 32px rgba(0,0,0,0.2),
-        0 0 20px rgba(52, 152, 219, 0.1);
+        0 0 20px rgba(52, 152, 219, 0.1),
+        inset 0 0 20px rgba(77, 114, 255, 0.1);
     transition:0.3s;
 }
 
 .setup-box:hover{
-    border-color:rgba(255,255,255,0.3);
+    border-color:rgba(102, 216, 255, 0.8);
     box-shadow:
         0 15px 40px rgba(0,0,0,0.3),
-        0 0 30px rgba(52, 152, 219, 0.2);
+        0 0 30px rgba(52, 152, 219, 0.2),
+        inset 0 0 30px rgba(102, 216, 255, 0.15);
 }
 
 .setup-box h1{
@@ -1333,6 +1373,7 @@ hr{
     font-size:32px;
     font-weight:700;
     letter-spacing:2px;
+    color:#66d8ff;
 }
 
 .subtitle{
