@@ -1,19 +1,36 @@
 
-// =======================
-// BUTTON
-// =======================
+// Data arrays are loaded from data/races.js, data/roles.js, data/skills.js, and data/titles.js.
+// script.js only contains application logic, rendering, and localization helpers.
 
+// DOM Elements
 const gachaBtn = document.getElementById("gachaBtn");
 const raceSelect = document.getElementById("raceSelect");
 const raceDescription = document.getElementById("raceDescription");
 const rerollSkillsBtn = document.getElementById("rerollSkillsBtn");
 const rerollTitlesBtn = document.getElementById("rerollTitlesBtn");
+const saveCodeBtn = document.getElementById("saveCodeBtn");
+const loadCodeBtn = document.getElementById("loadCodeBtn");
+const saveNote = document.getElementById("saveNote");
+const battleCodeLabel = document.getElementById("battleCodeLabel");
+const battleCodeBtn = document.getElementById("battleCodeBtn");
+const resetBattleBtn = document.getElementById("resetBattleBtn");
+const battleCodeInput = document.getElementById("battleCodeInput");
+const battleCodeNote = document.getElementById("battleCodeNote");
+const logCountButtons = Array.from(document.querySelectorAll(".log-count-btn"));
+const battleLogBox = document.getElementById("battleLogBox");
+const battleLogContainer = document.getElementById("battleLogContainer");
+const winrateBox = document.querySelector(".winrate-box");
+const winrateBoxTitle = document.getElementById("winrateBoxTitle");
+const winrateTable = document.getElementById("winrateTable");
+const winrateNote = document.getElementById("winrateNote");
 const btnEnglish = document.getElementById("btnEnglish");
 const btnIndonesian = document.getElementById("btnIndonesian");
 const setupTitle = document.getElementById("setupTitle");
 const setupSubtitle = document.getElementById("setupSubtitle");
 const labelCharacterName = document.getElementById("labelCharacterName");
 const labelGuildName = document.getElementById("labelGuildName");
+const labelSaveCode = document.getElementById("labelSaveCode");
+const saveCodeInput = document.getElementById("saveCodeInput");
 const labelChooseRace = document.getElementById("labelChooseRace");
 const labelName = document.getElementById("labelName");
 const labelRace = document.getElementById("labelRace");
@@ -34,6 +51,8 @@ const rerollTitlesLabel = rerollTitlesBtn;
 
 let currentCharacter = null;
 let currentLang = "english";
+let battleLogRenderToken = 0;
+let currentBattleState = null;
 
 const translations = {
     english: {
@@ -62,6 +81,35 @@ const translations = {
         titleTitle: "Tittle",
         rerollSkills: "Reroll Skills",
         rerollTitle: "Reroll Title",
+        saveCodeLabel: "Save Code",
+        saveCodeInputPlaceholder: "Enter save code",
+        saveCodeButton: "Save Character Code",
+        loadCodeButton: "Load Character",
+        loadCodeLoading: "Loading character<span class=\"dot\">.</span><span class=\"dot\">.</span><span class=\"dot\">.</span>",
+        saveCodePlaceholder: "Character code will appear here",
+        saveCodeNote: "Tap the button to copy the code.",
+        saveCodeCopied: "Character code copied!",
+        saveCodeInputEmpty: "Please enter a save code.",
+        saveCodeInvalid: "Invalid save code.",
+        saveCodeLoaded: "Character loaded.",
+        battleCodeLabel: "Opponent Battle Code",
+        battleCodeInputPlaceholder: "Enter opponent code",
+        battleCodeButton: "Battle",
+        battleCodeNote: "Enter opponent code to start battle.",
+        battleCodeInputEmpty: "Please enter opponent code.",
+        battleCodeInvalid: "Invalid opponent code.",
+        battleNoCharacter: "Generate your character first.",
+        battleFromGuild: "from guild",
+        battleVersusLabel: "VS",
+        battleResultPrefix: "Battle Result",
+        battleResultRanks: "Your rank {player} vs Opponent rank {opponent}",
+        battleResultChance: "chance",
+        battleOutcomeWin: "You win",
+        battleOutcomeLose: "You lose",
+        battleDisabledText: "Battle done",
+        battleResetButton: "Reset",
+        winrateTitle: "Rank Winrate Chart",
+        winrateNoteText: "Estimated winrate based on rank matchup.",
         enterNameAlert: "Please enter a character name first!",
         enterGuildAlert: "Please enter a guild name first!",
         placeholderCharacterName: "Enter character name",
@@ -98,10 +146,36 @@ const translations = {
         titleTitle: "Julukan",
         rerollSkills: "Ulang Keterampilan",
         rerollTitle: "Ulang Julukan",
+        saveCodeButton: "Simpan Kode Karakter",
+        loadCodeButton: "Muat Karakter",
+        loadCodeLoading: "Memuat karakter<span class=\"dot\">.</span><span class=\"dot\">.</span><span class=\"dot\">.</span>",
+        saveCodePlaceholder: "Kode karakter akan muncul di sini",
+        saveCodeNote: "Ketuk tombol untuk menyalin kode.",
+        saveCodeCopied: "Kode karakter disalin!",
+        saveCodeInputEmpty: "Masukkan kode karakter.",
+        saveCodeInvalid: "Kode karakter tidak valid.",
+        saveCodeLoaded: "Karakter dimuat.",
+        battleCodeLabel: "Kode Battle Lawan",
+        battleCodeInputPlaceholder: "Masukkan kode lawan",
+        battleCodeButton: "Battle",
+        battleCodeNote: "Masukkan kode lawan untuk memulai battle.",
+        battleFromGuild: "dari guild",
+        battleVersusLabel: "VS",
+        battleResultPrefix: "Hasil Pertarungan",
+        battleResultRanks: "Rank Anda {player} vs Rank Lawan {opponent}",
+        battleResultChance: "kesempatan",
+        battleOutcomeWin: "Anda menang",
+        battleOutcomeLose: "Anda kalah",
+        battleDisabledText: "Battle selesai",
+        battleResetButton: "Reset",
+        winrateTitle: "Tabel Winrate Rank",
+        winrateNoteText: "Perkiraan winrate berdasarkan pertandingan rank.",
         enterNameAlert: "Isi nama karakter dulu!",
         enterGuildAlert: "Isi nama guild dulu!",
         placeholderCharacterName: "Masukkan nama karakter",
         placeholderGuildName: "Masukkan nama guild",
+        saveCodeLabel: "Kode Karakter",
+        saveCodeInputPlaceholder: "Masukkan Kode Karakter",
         bonusLabel: "Bonus",
         bonusStrength: "Kekuatan",
         bonusHealth: "Kesehatan",
@@ -110,393 +184,65 @@ const translations = {
     }
 };
 
-const itemTranslations = {
-    indonesian: {
-        roles: {
-            Warrior: "Prajurit",
-            Mage: "Penyihir",
-            Assassin: "Pembunuh Bayaran",
-            Healer: "Penyembuh",
-            Tank: "Perisai",
-            Archer: "Pemanah",
-            Necromancer: "Nekromancer",
-            Paladin: "Paladin",
-            Berserker: "Berserker",
-            Spearman: "Prajurit Tombak",
-            Knight: "Ksatria",
-            Samurai: "Samurai",
-            Ninja: "Ninja",
-            Gunslinger: "Penembak",
-            "Battle Priest": "Pendeta Perang",
-            "Dark Knight": "Ksatria Gelap",
-            Spellblade: "Pedang Sihir",
-            Summoner: "Pemanggil",
-            "Beast Tamer": "Pengendali Binatang",
-            "Dragon Slayer": "Pembunuh Naga",
-            Trader: "Pedagang",
-            Merchant: "Pedagang Besar",
-            Blacksmith: "Pandai Besi",
-            Alchemist: "Alkemis",
-            Chef: "Koki",
-            "Inn Keeper": "Pemilik Penginapan",
-            "Dungeon Broker": "Broker Penjara",
-            "Treasure Appraiser": "Penilai Harta Karun",
-            "Potion Seller": "Penjual Ramuan",
-            "Artifact Dealer": "Pedagang Artefak",
-            President: "Presiden",
-            "Vice President": "Wakil Presiden",
-            "Minister of Defense": "Menteri Pertahanan",
-            "Minister of Finance": "Menteri Keuangan",
-            Governor: "Gubernur",
-            Mayor: "Walikota",
-            "Royal Advisor": "Penasihat Kerajaan",
-            "Tax Collector": "Pengumpul Pajak",
-            "National Strategist": "Ahli Strategi Nasional",
-            "Dungeon Affairs Minister": "Menteri Urusan Penjara",
-            King: "Raja",
-            Queen: "Ratu",
-            Prince: "Pangeran",
-            Princess: "Putri",
-            Emperor: "Kaisar",
-            Empress: "Permaisuri",
-            "Crown Prince": "Pangeran Mahkota",
-            "Royal Guard Commander": "Komandan Pengawal Kerajaan",
-            Spy: "Mata-mata",
-            "Double Agent": "Agen Ganda",
-            "Secret Agent": "Agen Rahasia",
-            "Intelligence Officer": "Perwira Intelijen",
-            "Dungeon Investigator": "Penyelidik Penjara",
-            "Shadow Operative": "Operatif Bayangan",
-            Teacher: "Guru",
-            Doctor: "Dokter",
-            Engineer: "Insinyur",
-            Programmer: "Programmer",
-            Farmer: "Petani",
-            "Police Officer": "Polisi",
-            Soldier: "Tentara",
-            Journalist: "Jurnalis",
-            Lawyer: "Pengacara",
-            "Civil Servant": "Pegawai Negeri",
-            "Indonesian Citizen": "Warga Indonesia",
-            "Neighborhood Chief": "Ketua RT",
-            "Village Chief": "Kepala Desa",
-            "Parking Attendant": "Juru Parkir",
-            "Instant Noodle Connoisseur": "Pecinta Mie Instan",
-            "Motorcycle Gang Leader": "Pemimpin Geng Motor",
-            "Local Hero": "Pahlawan Lokal",
-            "Professional Queue Cutter": "Ahli Memotong Antrean",
-            Boyfriend: "Pacar Laki-Laki",
-            Girlfriend: "Pacar Wanita",
-            "Professional Sleeper": "Tukang Tidur Profesional",
-            "Full-Time Gambler": "Penjudi Sejati",
-            "Professional Procrastinator": "Ahli Menunda",
-            Unemployed: "Pengangguran",
-            "Dungeon Tourist": "Turis Penjara",
-            "Treasure Accident Finder": "Pencari Harta Alami",
-            "Goblin Negotiator": "Negosiator Goblin",
-            "Monster Influencer": "Influencer Monster",
-            "Dungeon YouTuber": "YouTuber Penjara",
-            "Meme Lord": "Raja Meme",
-            "Keyboard Warrior": "Pejuang Keyboard",
-            "Professional NPC": "NPC Profesional",
-            "Background Character": "Karakter Tidak Penting",
-            "Main Character": "Tokoh Utama",
-            "Side Character": "Tokoh Sampingan",
-            "Comic Relief": "Penghibur Komik",
-            "Plot Armor User": "Pengguna Plot Armor",
-            "World Destroyer": "Penghancur Dunia",
-            "Professional Villain": "Penjahat Profesional",
-            "Demon King's Intern": "Raja Iblis Magang",
-            "Hero Association Janitor": "Pahlawan Penjaga Kebersihan",
-            "Legendary Fisherman": "Nelayan Legendaris",
-            "Chicken Whisperer": "Jago Bahasa Ayam",
-            "Goblin Rights Activist": "Aktivis Hak Goblin",
-            "Certified Door Kicker": "Pendorong Pintu Bersertifikat",
-            "Dungeon Tax Evasion Expert": "Pakar Pengelakan Pajak Penjara",
-            "Professional Loot Goblin": "Profesional Goblin",
-            "Walking Disaster": "Bencana Berjalan",
-            "Harbinger of Chaos": "Pembawa Kekacauan",
-            "Ancient Coffee Addict": "Pecandu Kopi Kuno",
-            "Supreme Couch Guardian": "Penjaga Sofa Tertinggi",
-            "Master of Bad Decisions": "Ahli Keputusan Buruk"
-        },
-        skills: {
-            "Sword Mastery": "Ahli Pedang",
-            "Dual Wield": "Pengguna Senjata Ganda",
-            "Shield Bash": "Hantaman Perisai",
-            "Axe Mastery": "Ahli Kapak",
-            "Spear Mastery": "Ahli Tombak",
-            "Bow Mastery": "Ahli Busur",
-            "Gun Mastery": "Ahli Senjata",
-            "Martial Arts": "Seni Bela Diri",
-            "Critical Strike": "Serangan Kritis",
-            Berserk: "Berserk",
-            "Counter Attack": "Serangan Balik",
-            Parry: "Parry",
-            "Battle Instinct": "Insting Pertempuran",
-            "Combo Master": "Master Kombinasi",
-            "Weapon Throw": "Lempar Senjata",
-            "Last Stand": "Si Paling Terakhir",
-            Stealth: "Lah Kok Ilang",
-            "Shadow Step": "Langkah Bayangan",
-            "Instant Dash": "Laju Kilat",
-            Teleportation: "Teleportasi",
-            "Wall Climbing": "Memanjat Dinding",
-            "Silent Movement": "Gerak Senyap",
-            "Evasion Mastery": "Ahli Penghindaran",
-            Regeneration: "Regenerasi",
-            "Fast Learner": "Cepat Belajar",
-            Leadership: "Kepemimpinan",
-            "Danger Sense": "Indra Bahaya",
-            "Mana Control": "Kontrol Mana",
-            "Divine Blessing": "Berkah Ilahi",
-            "Pain Resistance": "Tahan Sakit",
-            "Mental Fortitude": "Ketangguhan Mental",
-            "Aura Enhancement": "Peningkatan Aura",
-            "Fire Magic": "Sihir Api",
-            "Water Magic": "Sihir Air",
-            "Wind Magic": "Sihir Angin",
-            "Earth Magic": "Sihir Bumi",
-            "Lightning Magic": "Sihir Petir",
-            "Ice Magic": "Sihir Es",
-            "Light Magic": "Sihir Cahaya",
-            "Dark Magic": "Sihir Gelap",
-            "Space Magic": "Sihir Ruang",
-            "Time Magic": "Sihir Waktu",
-            "Gravity Magic": "Sihir Gravitasi",
-            "Blood Magic": "Sihir Darah",
-            "Summoning Magic": "Sihir Pemanggilan",
-            "Healing Magic": "Sihir Penyembuhan",
-            "Barrier Magic": "Sihir Penghalang",
-            "Mana Burst": "Ledakan Mana",
-            "Curse Manipulation": "Manipulasi Kutukan",
-            "Soul Manipulation": "Manipulasi Jiwa",
-            Necromancy: "Nekromansi",
-            "Spirit Communication": "Komunikasi Roh",
-            "Monster Taming": "Menjinakkan Monster",
-            "Treasure Detection": "Deteksi Harta Karun",
-            "Trap Detection": "Deteksi Perangkap",
-            "Trap Disarm": "Melumpuhkan Perangkap",
-            "Dungeon Mapping": "Pemetaan Penjara",
-            "Secret Passage Detection": "Deteksi Jalan Rahasia",
-            "Loot Enhancement": "Peningkatan Loot",
-            "Rare Drop Boost": "Peningkatan Drop Langka",
-            "Boss Slayer": "Pembunuh Bos",
-            "Dragon Slayer": "Pembunuh Naga",
-            "Undead Purification": "Penyucian Undead",
-            Tracking: "Pelacakan",
-            "Beast Hunting": "Berburu Binatang",
-            "Item Appraisal": "Penilaian Barang",
-            "Artifact Creation": "Pembuatan Artefak",
-            Alchemy: "Alkimia",
-            Blacksmithing: "Pandai Besi",
-            "Potion Brewing": "Pembuatan Ramuan",
-            Enchanting: "Penyihiran",
-            Cooking: "Memasak",
-            Engineering: "Teknik",
-            "Merchant's Eye": "Mata Pedagang",
-            Bargaining: "Tawar-menawar",
-            "Supply Chain Management": "Manajemen Rantai Pasokan",
-            "Tax Evasion": "Pengelakan Pajak",
-            Negotiation: "Negosiasi",
-            "Market Prediction": "Prediksi Pasar",
-            "Investment Genius": "Jenius Investasi",
-            "Business Expansion": "Perluasan Bisnis",
-            "Public Speaking": "Berbicara di Depan Umum",
-            "Political Manipulation": "Manipulasi Politik",
-            Diplomacy: "Diplomasi",
-            "Nation Management": "Manajemen Negara",
-            "Emergency Response": "Tanggap Darurat",
-            "Law Enforcement": "Penegakan Hukum",
-            "Plot Armor": "Plot Armor",
-            "Main Character Aura": "Aura Tokoh Utama",
-            "Lucky Accident": "Kecelakaan Beruntung",
-            "Dramatic Entrance": "Masuk Dramatis",
-            "Perfect Timing": "Waktu Sempurna",
-            "Destiny's Chosen": "Pilihan Takdir",
-            "Reality Manipulation": "Manipulasi Realitas",
-            "Probability Manipulation": "Manipulasi Probabilitas",
-            "World Reset": "Reset Dunia",
-            "Dimensional Travel": "Perjalanan Dimensi",
-            "Fate Alteration": "Perubahan Takdir",
-            "Existence Erasure": "Penghapusan Eksistensi",
-            Immortality: "Keabadian",
-            Resurrection: "Kebangkitan",
-            "Infinite Mana": "Mana Tak Terbatas",
-            "Chaos Incarnation": "Inkarnasi Kekacauan",
-            Omniscience: "Dapat Mengetahui",
-            "Absolute Luck": "Keberuntungan Mutlak",
-            "Goblin Negotiation": "Negosiasi Goblin",
-            "Chicken Communication": "Komunikasi Ayam",
-            "Coffee Addiction": "Kecanduan Kopi",
-            "Supreme Laziness": "Kemalasan Tertinggi",
-            "Emotional Damage": "Kerusakan Emosional",
-            "Uno Reverse": "Uno Reverse",
-            "Talk No Jutsu": "Talk No Jutsu",
-            "Power of Friendship": "Kekuatan Persahabatan",
-            "Deus Ex Machina": "Deus Ex Machina",
-            "Instant Noodle Mastery": "Ahli Mie Instan",
-            "Professional Sleeping": "Tidur Profesional",
-            Procrastination: "Penundaan",
-            "Meme Creation": "Pencipta Meme",
-            "Bad Decision Making": "Pengambilan Keputusan Buruk",
-            "Unlimited Excuses": "Alasan Tak Terbatas",
-            "Awkward Silence": "Keheningan Canggung",
-            Overthinking: "Berpikir Terlalu Banyak",
-            "Keyboard Warrior": "Pejuang Keyboard"
-        },
-        titles: {
-            "Beginner Adventurer": "Petualang Pemula",
-            "Novice Explorer": "Penjelajah Pemula",
-            "Wandering Merchant": "Pedagang Pengembara",
-            "Monster Hunter": "Pemburu Monster",
-            "Dungeon Explorer": "Penjelajah Penjara",
-            "Treasure Seeker": "Pencari Harta Karun",
-            "Guild Recruit": "Rekrutan Guild",
-            "Rookie Adventurer": "Petualang Pemula",
-            "Village Protector": "Pelindung Desa",
-            "Traveling Hero": "Pahlawan Pengembara",
-            "The Merciless": "Yang Tanpa Ampun",
-            "Dragon Slayer": "Pembunuh Naga",
-            "King's Guardian": "Pelindung Raja",
-            "Shadow Reaper": "Pemotong Bayangan",
-            "The Executioner": "Algojo",
-            "Champion of War": "Juara Perang",
-            "Blade Saint": "Santos Pedang",
-            "Conqueror of Dungeons": "Penakluk Penjara",
-            "The Last Defender": "Pembela Terakhir",
-            "Hero of a Thousand Battles": "Pahlawan Seribu Pertempuran",
-            "Archmage of Eternity": "Arkemaet Abadi",
-            "Master of Elements": "Penguasa Elemen",
-            "Bearer of Divine Light": "Pembawa Cahaya Ilahi",
-            "The Cursed One": "Yang Terkena Kutukan",
-            "The Forbidden Mage": "Penyihir Terlarang",
-            "Keeper of Ancient Secrets": "Penjaga Rahasia Kuno",
-            "Chosen by Mana": "Pilihan Mana",
-            "The Time Weaver": "Penjerat Waktu",
-            "Lord of Darkness": "Tuan Kegelapan",
-            "The Reality Bender": "Pembengkok Realitas",
-            "The Chosen One": "Yang Terpilih",
-            "Hero of Light": "Pahlawan Cahaya",
-            "Crown Prince": "Pangeran Mahkota",
-            "King of Kings": "Raja Segala Raja",
-            "Emperor of Humanity": "Kaisar Kemanusiaan",
-            "The Forgotten King": "Raja yang Terlupakan",
-            "The Eternal Monarch": "Monarki Abadi",
-            "Ruler of the Seven Kingdoms": "Penguasa Tujuh Kerajaan",
-            "President of the Republic": "Presiden Republik",
-            "Minister of Dungeon Affairs": "Menteri Urusan Penjara",
-            "Supreme Tax Collector": "Pengumpul Pajak Tertinggi",
-            "Guardian of the Nation": "Penjaga Bangsa",
-            "National Hero": "Pahlawan Nasional",
-            "The People's Champion": "Juara Rakyat",
-            "Professional Sleeper": "Tidur Profesional",
-            "Master of Procrastination": "Master Penundaan",
-            "Certified Couch Guardian": "Penjaga Sofa Bersertifikat",
-            "Lord of Instant Noodles": "Tuan Mie Instan",
-            "The Unemployed Legend": "Legenda Pengangguran",
-            "Professional NPC": "NPC Profesional",
-            "The Main Character": "Tokoh Utama",
-            "Background Character No. 37": "Karakter Latar No. 37",
-            "Goblin Negotiator": "Negosiator Goblin",
-            "Dungeon Tourist": "Turis Penjara",
-            "The One Who Forgot the Quest": "Yang Lupa Misi",
-            "Master of Bad Decisions": "Ahli Keputusan Buruk",
-            "CEO of Laziness": "CEO Kemalasan",
-            "King of Overthinking": "Raja Berpikir Terlalu Banyak",
-            "The Legendary Queue Cutter": "Pemotong Antrean Legendaris",
-            "Harbinger of Doom": "Pembawa Malapetaka",
-            "Bringer of Chaos": "Pembawa Kekacauan",
-            "Destroyer of Worlds": "Penghancur Dunia",
-            "The Unkillable": "Yang Tak Terbunuh",
-            "The Immortal One": "Yang Abadi",
-            "Walker Between Dimensions": "Penjelajah Dimensi",
-            "The Fate Breaker": "Pemecah Takdir",
-            "God's Favorite Child": "Anak Kesayangan Tuhan",
-            "The Plot Armor Incarnate": "Inkarnasi Plot Armor",
-            "Supreme Being": "Makhluk Tertinggi",
-            "The End of All Things": "Akhir Segala Sesuatu",
-            "Lord of RNG": "Tuan RNG",
-            "The Chosen by Gacha": "Yang Terpilih oleh Gacha",
-            "The Error in Reality": "Kesalahan dalam Realitas",
-            "The Final Boss": "Bos Terakhir",
-            "The One Above All": "Yang Di Atas Segalanya"
-        }
-    }
-};
-
-function translateRole(roleName) {
-    if (currentLang === "indonesian") {
-        return itemTranslations.indonesian.roles[roleName] || roleName;
-    }
-    return roleName;
+// Helper functions untuk translate data dari array of objects
+// Helper functions for bilingual item rendering from data/*.js
+function getItemName(item, lang = currentLang) {
+    if (!item) return "";
+    if (item.name && typeof item.name === "object") item = item.name;
+    if (lang === "indonesian") return item.indonesian || item.english || "";
+    return item.english || item.indonesian || "";
 }
 
-function translateSkillName(skillName) {
-    if (currentLang === "indonesian") {
-        return itemTranslations.indonesian.skills[skillName] || skillName;
-    }
-    return skillName;
+function getRoleDisplay(roleObj) {
+    return getItemName(roleObj);
 }
 
-function translateTitleName(titleName) {
-    if (currentLang === "indonesian") {
-        return itemTranslations.indonesian.titles[titleName] || titleName;
-    }
-    return titleName;
+function getSkillDisplay(skillObj) {
+    return getItemName(skillObj);
 }
 
-const raceDescriptionTranslations = {
-    indonesian: {
-        Human: "Seimbang dan mudah beradaptasi",
-        Elf: "Cepat dan penuh sihir",
-        Dwarf: "Kokoh dan tahan banting",
-        Sankta: "Suci dan kuat",
-        Demon: "Gelap dan agresif",
-        Angel: "Ilahi dan gaib",
-        Dragonkin: "Kuno dan perkasa",
-        Beastman: "Liar dan garang",
-        Orc: "Brutal dan tak kenal takut",
-        Goblin: "Licik dan nakal",
-        Vampire: "Anggun dan abadi",
-        Werewolf: "Buas dan tak terhentikan",
-        Slime: "Lembut tapi ternyata tahan lama",
-        Undead: "Kematian tak dapat menghentikannya",
-        Fairy: "Kecil tapi penuh sihir",
-        Giant: "Besar dan mengalahkan lawan",
-        Merfolk: "Penguasa laut",
-        Android: "Buatan namun efisien",
-        Cyborg: "Setengah mesin, setengah daging",
-        Alien: "Makhluk misterius dari luar",
-        Catfolk: "Cepat dan penasaran",
-        "Fox Spirit": "Licik dan memesona",
-        Phoenix: "Lahir kembali dari abu",
-        "Ancient Dragon": "Penguasa legendaris di langit",
-        Indonesian: "Bisa bertahan hampir semuanya",
-        NPC: "Ada hanya untuk memberi misi",
-        "Keyboard Warrior": "Kekuatan meningkat online",
-        "Professional Sleeper": "Tidur adalah kekuatan sejati",
-        "Gacha Addict": "Tidak pernah berhenti menarik",
-        "Overthinker": "Menganalisis segalanya",
-        "Final Boss": "Semua orang takut pada makhluk ini",
-        Unlucky: "Stat tidak segalanya bagiku"
-    }
-};
-
-function getRaceDescription(raceName) {
-    if (currentLang === "indonesian" && raceDescriptionTranslations.indonesian[raceName]) {
-        return raceDescriptionTranslations.indonesian[raceName];
-    }
-    const race = races.find(r => r.name === raceName);
-    return race?.description || "";
+function getTitleDisplay(titleObj) {
+    return getItemName(titleObj);
 }
+
+function getRaceDisplay(race) {
+    if (!race) return "";
+    if (race.name && typeof race.name === "object") {
+        return currentLang === "indonesian" ? race.name.indonesian || race.name.english : race.name.english;
+    }
+    return race.name || "";
+}
+
+function getRaceDescription(race) {
+    if (!race) return "";
+    if (typeof race === "string") {
+        race = races.find(r => r.name?.english === race);
+    }
+
+    if (!race) return "";
+    if (race.description && typeof race.description === "object") {
+        return currentLang === "indonesian" ? race.description.indonesian || race.description.english : race.description.english;
+    }
+    return race.description || "";
+}
+
 
 gachaBtn.addEventListener("click", startGachaAnimation);
 raceSelect.addEventListener("change", updateRaceDescription);
 rerollSkillsBtn?.addEventListener("click", rerollSkills);
 rerollTitlesBtn?.addEventListener("click", rerollTitles);
+saveCodeBtn?.addEventListener("click", saveCharacterCode);
+loadCodeBtn?.addEventListener("click", startLoadAnimation);
 btnEnglish?.addEventListener("click", () => setLanguage("english"));
 btnIndonesian?.addEventListener("click", () => setLanguage("indonesian"));
+battleCodeBtn?.addEventListener("click", startBattle);
+resetBattleBtn?.addEventListener("click", resetBattle);
+logCountButtons.forEach(button => {
+    button.addEventListener("click", () => {
+        logCountButtons.forEach(btn => btn.classList.remove("active"));
+        button.classList.add("active");
+    });
+});
 
 populateRaceOptions();
 setGachaBtnDefault();
@@ -526,10 +272,48 @@ function setGachaBtnLoading() {
     `;
 }
 
-function populateRaceOptions() {
+function setLoadBtnDefault() {
+    const labelText = translations[currentLang]?.loadCodeButton || "Load Character";
+    loadCodeBtn.innerHTML = `
+        <span class="btn-icon">&lt;&gt;</span>
+        <span class="btn-label" id="loadCodeLabel">${labelText}</span>
+        <span class="btn-star star-1">★</span>
+        <span class="btn-star star-2">★</span>
+        <span class="btn-star star-3">★</span>
+    `;
+}
+
+function setLoadBtnLoading() {
+    const loadingText = translations[currentLang]?.loadCodeLoading || `&lt;&gt; Loading<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>`;
+    loadCodeBtn.innerHTML = `
+        <span class="btn-icon">&lt;&gt;</span>
+        <span class="btn-label" id="loadCodeLabel">${loadingText}</span>
+        <span class="btn-star star-1">★</span>
+        <span class="btn-star star-2">★</span>
+        <span class="btn-star star-3">★</span>
+    `;
+}
+
+function showStatusCard() {
+    const setupBox = document.querySelector(".setup-box");
+    const card = document.querySelector(".card");
+    if (setupBox) {
+        setupBox.classList.add("hidden");
+    }
+    if (card) {
+        card.classList.remove("hidden");
+    }
+}
+
+function populateRaceOptions(selectedRace = raceSelect.value) {
     raceSelect.innerHTML = races
-        .map(race => `<option value="${race.name}">${race.name}</option>`)
+        .map(race => `<option value="${race.name.english}">${getRaceDisplay(race)}</option>`)
         .join("");
+
+    if (selectedRace && Array.from(raceSelect.options).some(opt => opt.value === selectedRace)) {
+        raceSelect.value = selectedRace;
+    }
+
     updateRaceDescription();
 }
 
@@ -546,7 +330,7 @@ function formatBonus(bonus) {
 }
 
 function updateRaceDescription() {
-    const selected = races.find(race => race.name === raceSelect.value);
+    const selected = races.find(race => race.name?.english === raceSelect.value);
 
     if (!selected) {
         raceDescription.textContent = translations[currentLang].selectRaceDescription;
@@ -554,7 +338,7 @@ function updateRaceDescription() {
     }
 
     raceDescription.innerHTML = `
-        ${getRaceDescription(selected.name)}
+        ${getRaceDescription(selected)}
         <span class="race-bonus">${translations[currentLang].bonusLabel}: ${formatBonus(selected.bonus)}</span>
     `;
 }
@@ -584,12 +368,409 @@ function setLanguage(lang) {
     titleTitle.textContent = translations[lang].titleTitle;
     rerollSkillsLabel.textContent = translations[lang].rerollSkills;
     rerollTitlesLabel.textContent = translations[lang].rerollTitle;
+    if (labelSaveCode) labelSaveCode.textContent = translations[lang].saveCodeLabel;
+    if (saveCodeInput) saveCodeInput.placeholder = translations[lang].saveCodeInputPlaceholder;
+    if (saveCodeBtn) saveCodeBtn.textContent = translations[lang].saveCodeButton;
+    if (battleCodeLabel) battleCodeLabel.textContent = translations[lang].battleCodeLabel;
+    if (battleCodeInput) battleCodeInput.placeholder = translations[lang].battleCodeInputPlaceholder;
+    if (battleCodeBtn) {
+        const battleLabel = battleCodeBtn.querySelector(".btn-label");
+        if (battleLabel) battleLabel.textContent = translations[lang].battleCodeButton;
+    }
+    if (resetBattleBtn) resetBattleBtn.textContent = translations[lang].battleResetButton;
+    if (battleCodeNote) battleCodeNote.textContent = translations[lang].battleCodeNote;
+    if (winrateBoxTitle) winrateBoxTitle.textContent = translations[lang].winrateTitle;
+    if (winrateNote) winrateNote.textContent = translations[lang].winrateNoteText;
+    if (loadCodeBtn) {
+        const loadLabel = loadCodeBtn.querySelector(".btn-label");
+        if (loadLabel) loadLabel.textContent = translations[lang].loadCodeButton;
+    }
+    if (saveNote) saveNote.textContent = translations[lang].saveCodeNote;
     document.getElementById("charName").placeholder = translations[lang].placeholderCharacterName;
     document.getElementById("guildName").placeholder = translations[lang].placeholderGuildName;
     btnEnglish.classList.toggle("active", lang === "english");
     btnIndonesian.classList.toggle("active", lang === "indonesian");
     setGachaBtnDefault();
+    setLoadBtnDefault();
+    populateRaceOptions(raceSelect.value);
     updateRaceDescription();
+    renderWinrateTable();
+
+    if (currentBattleState && battleLogBox && !battleLogBox.classList.contains("hidden")) {
+        const logs = generateBattleLogs(currentBattleState.opponent, currentBattleState.outcome, currentBattleState.logCount, lang);
+        void renderBattleLogs(logs);
+    }
+}
+
+function saveCharacterCode() {
+    if (!currentCharacter) return;
+    const encoded = encodeCharacterCode(currentCharacter);
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(encoded)
+            .then(() => {
+                if (saveNote) saveNote.textContent = translations[currentLang].saveCodeCopied;
+                setTimeout(() => {
+                    if (saveNote) saveNote.textContent = translations[currentLang].saveCodeNote;
+                }, 2500);
+            })
+            .catch(() => {
+                if (saveNote) saveNote.textContent = "Copy failed. Use Ctrl+C.";
+            });
+    } else {
+        if (saveNote) saveNote.textContent = "Copy unavailable. Use Ctrl+C.";
+    }
+}
+
+function loadCharacterCode(code) {
+    const saveCode = (typeof code === "string" ? code : saveCodeInput?.value?.trim());
+    if (!saveCode) {
+        if (saveNote) saveNote.textContent = translations[currentLang].saveCodeInputEmpty || "Please enter a save code.";
+        return null;
+    }
+
+    const payload = decodeCharacterCode(saveCode);
+    if (!payload) {
+        if (saveNote) saveNote.textContent = translations[currentLang].saveCodeInvalid || "Invalid save code.";
+        return null;
+    }
+
+    const loaded = parseCharacterPayload(payload);
+    if (!loaded) {
+        if (saveNote) saveNote.textContent = translations[currentLang].saveCodeInvalid || "Invalid save code.";
+        return null;
+    }
+
+    return loaded;
+}
+
+function loadOpponentCharacterCode(code) {
+    const saveCode = (typeof code === "string" ? code : battleCodeInput?.value?.trim());
+    if (!saveCode) {
+        if (battleCodeNote) battleCodeNote.textContent = translations[currentLang].battleCodeInputEmpty || "Please enter opponent code.";
+        return null;
+    }
+
+    const payload = decodeCharacterCode(saveCode);
+    if (!payload) {
+        if (battleCodeNote) battleCodeNote.textContent = translations[currentLang].battleCodeInvalid || "Invalid opponent code.";
+        return null;
+    }
+
+    const loaded = parseCharacterPayload(payload);
+    if (!loaded) {
+        if (battleCodeNote) battleCodeNote.textContent = translations[currentLang].battleCodeInvalid || "Invalid opponent code.";
+        return null;
+    }
+
+    return loaded;
+}
+
+function getBattleOutcome(playerRank, opponentRank) {
+    const scoreMap = { SSS: 7, SS: 6, S: 5, A: 4, B: 3, C: 2, D: 1, F: 0 };
+    const diff = (scoreMap[playerRank] || 0) - (scoreMap[opponentRank] || 0);
+    let winChance;
+
+    if (diff >= 3) winChance = 95;
+    else if (diff === 2) winChance = 82;
+    else if (diff === 1) winChance = 68;
+    else if (diff === 0) winChance = 50;
+    else if (diff === -1) winChance = 32;
+    else if (diff === -2) winChance = 18;
+    else winChance = 5;
+
+    const roll = Math.random() * 100;
+    const won = roll < winChance;
+
+    return {
+        playerRank,
+        opponentRank,
+        winChance,
+        roll: Math.round(roll),
+        result: won ? "win" : "lose"
+    };
+}
+
+function getLogCount() {
+    const active = document.querySelector(".log-count-btn.active");
+    return active ? Number(active.dataset.count) : 10;
+}
+
+function getSkillDisplayName(skill, lang) {
+    if (!skill) return lang === "indonesian" ? "keterampilan" : "skill";
+    return lang === "indonesian" ? (skill.indonesian || skill.english || "keterampilan") : (skill.english || skill.indonesian || "skill");
+}
+
+function formatBattleLine(template, actorName, titleName, skillName) {
+    return template
+        .replace(/\(name\)/g, actorName)
+        .replace(/\(nama\)/g, actorName)
+        .replace(/\(title\)/g, titleName || "")
+        .replace(/\(skill\)/g, skillName || "");
+}
+
+function generateBattleLogs(opponent, outcome, customCount = getLogCount(), lang = currentLang) {
+    const playerName = currentCharacter?.playerName || (lang === "indonesian" ? "Kamu" : "You");
+    const opponentName = opponent?.playerName || (lang === "indonesian" ? "Musuh" : "Opponent");
+    const playerTitle = (currentCharacter?.characterTitles && currentCharacter.characterTitles[0]?.[lang === "indonesian" ? "indonesian" : "english"]) || "";
+    const opponentTitle = (opponent?.characterTitles && opponent.characterTitles[0]?.[lang === "indonesian" ? "indonesian" : "english"]) || "";
+    const count = Number(customCount) || getLogCount();
+    const logLines = [];
+
+    const attackPool = lang === "indonesian" ? attackLogs.id : attackLogs.en;
+    const defensePool = lang === "indonesian" ? defenseLogs.id : defenseLogs.en;
+    const dodgePool = lang === "indonesian" ? dodgeLogs.id : dodgeLogs.en;
+
+    const playerSkills = (currentCharacter?.characterSkills || []).filter(Boolean);
+    const opponentSkills = (opponent?.characterSkills || []).filter(Boolean);
+
+    const startWithPlayer = Math.random() < 0.5;
+    const firstActor = startWithPlayer
+        ? { name: playerName, title: playerTitle, skills: playerSkills, isPlayer: true }
+        : { name: opponentName, title: opponentTitle, skills: opponentSkills, isPlayer: false };
+    const secondActor = startWithPlayer
+        ? { name: opponentName, title: opponentTitle, skills: opponentSkills, isPlayer: false }
+        : { name: playerName, title: playerTitle, skills: playerSkills, isPlayer: true };
+
+    for (let i = 0; i < count - 1; i++) {
+        const actor = i % 2 === 0 ? firstActor : secondActor;
+        const pool = [attackPool, defensePool, dodgePool][Math.floor(Math.random() * 3)];
+        const template = pool[Math.floor(Math.random() * pool.length)];
+        const skill = actor.skills.length > 0
+            ? actor.skills[Math.floor(Math.random() * actor.skills.length)]
+            : null;
+        const line = formatBattleLine(template, actor.name, actor.title, getSkillDisplayName(skill, lang));
+        logLines.push(line);
+    }
+
+    const finalActor = ((count - 1) % 2 === 0) ? firstActor : secondActor;
+    const finalResultForActor = finalActor.isPlayer
+        ? outcome.result
+        : (outcome.result === "win" ? "lose" : "win");
+    const finalPool = finalResultForActor === "win"
+        ? (lang === "indonesian" ? winLogs.id : winLogs.en)
+        : (lang === "indonesian" ? loseLogs.id : loseLogs.en);
+
+    const finalTemplate = finalPool[Math.floor(Math.random() * finalPool.length)];
+    const finalSkill = finalActor.skills.length > 0
+        ? finalActor.skills[Math.floor(Math.random() * finalActor.skills.length)]
+        : null;
+    const finalLine = formatBattleLine(finalTemplate, finalActor.name, finalActor.title, getSkillDisplayName(finalSkill, lang));
+    logLines.push(finalLine);
+
+    return logLines;
+}
+
+function formatBattleLogTimestamp(secondsValue) {
+    const minutes = Math.floor(secondsValue / 60).toString().padStart(2, "0");
+    const remainingSeconds = Math.floor(secondsValue % 60);
+    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}.0`;
+}
+
+async function renderBattleLogs(lines) {
+    if (!battleLogBox || !battleLogContainer) return;
+
+    const renderId = ++battleLogRenderToken;
+    battleLogContainer.innerHTML = "";
+    battleLogBox.classList.remove("hidden");
+
+    for (let index = 0; index < lines.length; index++) {
+        if (renderId !== battleLogRenderToken) break;
+
+        const node = document.createElement("div");
+        node.className = "battle-log-line";
+        node.textContent = `[${formatBattleLogTimestamp(index * 2)}] ${lines[index]}`;
+        battleLogContainer.insertBefore(node, battleLogContainer.firstChild);
+        battleLogContainer.scrollTop = 0;
+        node.animate([
+            { opacity: 0, transform: "translateY(8px)" },
+            { opacity: 1, transform: "translateY(0)" }
+        ], {
+            duration: 350,
+            easing: "ease-out"
+        });
+
+        if (index < lines.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+    }
+
+    // Update button text based on battle outcome after logs are done
+    if (currentBattleState) {
+        const resultText = currentBattleState.outcome.result === "win"
+            ? translations[currentLang].battleOutcomeWin
+            : translations[currentLang].battleOutcomeLose;
+        if (document.getElementById("battleCodeBtnLabel")) {
+            document.getElementById("battleCodeBtnLabel").textContent = resultText;
+        }
+    }
+
+    battleLogContainer.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+function startBattle() {
+    if (!currentCharacter) {
+        if (battleCodeNote) battleCodeNote.textContent = translations[currentLang].battleNoCharacter || "Generate your character first.";
+        return;
+    }
+
+    const opponent = loadOpponentCharacterCode(battleCodeInput?.value?.trim());
+    if (!opponent) return;
+    if (!battleCodeNote) return;
+
+    const playerRank = currentCharacter.overallRank || "F";
+    const opponentRank = opponent.overallRank || "F";
+    const outcome = getBattleOutcome(playerRank, opponentRank);
+
+    const rankLine = translations[currentLang].battleResultRanks
+        .replace("{player}", playerRank)
+        .replace("{opponent}", opponentRank);
+
+    const playerName = currentCharacter.playerName || "Unknown";
+    const playerGuild = currentCharacter.guildName || "Unknown Guild";
+    const opponentName = opponent.playerName || "Unknown";
+    const opponentGuild = opponent.guildName || "Unknown Guild";
+
+    const fromGuildText = translations[currentLang].battleFromGuild || "from guild";
+    const vsText = translations[currentLang].battleVersusLabel || "VS";
+
+    currentBattleState = {
+        opponent,
+        outcome,
+        logCount: getLogCount()
+    };
+
+    const logs = generateBattleLogs(opponent, outcome, currentBattleState.logCount, currentLang);
+    void renderBattleLogs(logs);
+    battleLogBox?.scrollIntoView({ behavior: "smooth", block: "center" });
+
+    battleCodeNote.innerHTML = "";
+    battleCodeNote.appendChild(createRankBadge(playerRank));
+    battleCodeNote.appendChild(document.createTextNode(` - ${playerName} ${fromGuildText} ${playerGuild}   ${vsText}   `));
+    battleCodeNote.appendChild(createRankBadge(opponentRank));
+    battleCodeNote.appendChild(document.createTextNode(` - ${opponentName} ${fromGuildText} ${opponentGuild}`));
+
+    if (battleCodeBtn) {
+        battleCodeBtn.classList.remove("win-anim", "lose-anim");
+        battleCodeBtn.classList.add(outcome.result === "win" ? "win-anim" : "lose-anim");
+        battleCodeBtn.disabled = true;
+    }
+}
+
+function createRankBadge(rank) {
+    const badge = document.createElement("span");
+    badge.className = `rank rank-${rank.toLowerCase()}`;
+    badge.textContent = rank;
+    return badge;
+}
+
+
+function resetBattle() {
+    if (battleCodeBtn) {
+        battleCodeBtn.disabled = false;
+        battleCodeBtn.classList.remove("win-anim", "lose-anim");
+        const battleCodeBtnLabel = document.getElementById("battleCodeBtnLabel");
+        if (battleCodeBtnLabel) {
+            battleCodeBtnLabel.textContent = translations[currentLang].battleCodeButton;
+        }
+    }
+    if (battleCodeNote) {
+        battleCodeNote.textContent = translations[currentLang].battleCodeNote;
+    }
+    if (battleLogBox) {
+        battleLogBox.classList.add("hidden");
+    }
+    if (battleLogContainer) {
+        battleLogContainer.innerHTML = "";
+    }
+    currentBattleState = null;
+    if (winrateBox) {
+        winrateBox.classList.remove("hidden");
+    }
+}
+
+function startLoadAnimation(event) {
+    event.preventDefault();
+    if (loadCodeBtn.disabled) return;
+
+    const code = saveCodeInput?.value?.trim();
+    if (!code) {
+        if (saveNote) saveNote.textContent = translations[currentLang].saveCodeInputEmpty || "Please enter a save code.";
+        return;
+    }
+
+    const existingPlayerName = document.getElementById("charName").value.trim();
+    const existingGuildName = document.getElementById("guildName").value.trim();
+
+    loadCodeBtn.disabled = true;
+    loadCodeBtn.classList.add("loading");
+    setLoadBtnLoading();
+
+    setTimeout(() => {
+        const loaded = loadCharacterCode(code);
+        loadCodeBtn.classList.remove("loading");
+        loadCodeBtn.disabled = false;
+        setLoadBtnDefault();
+
+        if (loaded) {
+            currentCharacter = loaded;
+            const nameInput = document.getElementById("charName");
+            const guildInput = document.getElementById("guildName");
+
+            if (nameInput) {
+                nameInput.value = loaded.playerName || "";
+            }
+            if (guildInput) {
+                guildInput.value = loaded.guildName || "";
+            }
+
+            renderCharacter(currentCharacter);
+            showStatusCard();
+            if (saveNote) saveNote.textContent = translations[currentLang].saveCodeLoaded || "Character loaded.";
+        } else {
+            if (saveNote) saveNote.textContent = translations[currentLang].saveCodeInvalid || "Invalid save code.";
+        }
+    }, 2000);
+}
+
+function parseCharacterPayload(payload) {
+    if (!payload || !payload.race) return null;
+
+    const raceData = races.find(r => r.name?.english === payload.race) || races.find(r => r.name?.indonesian === payload.race);
+    const roleData = roles.find(r => r.english === payload.role || r.indonesian === payload.role) || roles[0];
+    const skillsData = (payload.skills || []).map(item => {
+        const name = typeof item === "string" ? item : item.english || item.indonesian || "";
+        const baseSkill = skills.find(s => s.english === name || s.indonesian === name);
+        const rank = typeof item === "object" ? item.rank || "" : "";
+        if (baseSkill) return { ...baseSkill, rank: rank || baseSkill.rank || "F" };
+        return { english: name, indonesian: name, rank: rank || "F" };
+    }).filter(Boolean);
+
+    const titlesData = (payload.titles || []).map(item => {
+        const name = typeof item === "string" ? item : item.english || item.indonesian || "";
+        const baseTitle = titles.find(t => t.english === name || t.indonesian === name);
+        const rank = typeof item === "object" ? item.rank || "" : "";
+        if (baseTitle) return { ...baseTitle, rank: rank || baseTitle.rank || "F" };
+        return { english: name, indonesian: name, rank: rank || "F" };
+    }).filter(Boolean);
+
+    const savedRank = payload.overallRank || payload.rarity || payload.rank || "F";
+    return {
+        playerName: payload.playerName || "Unknown",
+        guildName: payload.guildName || "Unknown",
+        race: raceData || { name: { english: payload.race, indonesian: payload.race }, bonus: {}, description: { english: payload.description || "", indonesian: payload.description || "" } },
+        raceDescription: payload.description || getRaceDescription(raceData),
+        role: roleData,
+        strength: payload.strength || 0,
+        health: payload.health || 0,
+        mana: payload.mana || 0,
+        agility: payload.agility || 0,
+        level: payload.level || 1,
+        rarity: payload.rarity || payload.overallRank || payload.rank || "F",
+        characterSkills: skillsData,
+        characterTitles: titlesData,
+        overallRank: savedRank
+    };
 }
 
 function startGachaAnimation(event) {
@@ -622,19 +803,12 @@ function startGachaAnimation(event) {
     }, 3000);
 }
 
-// =======================
-// DOWNLOAD PNG
-// =======================
 
-
-// =======================
-// MAIN
-// =======================
 
 function generateCharacter() {
     const playerName = document.getElementById("charName").value.trim();
     const guildName = document.getElementById("guildName").value.trim();
-    const race = document.getElementById("raceSelect").value;
+    const raceValue = document.getElementById("raceSelect").value;
 
     if (playerName === "") {
         alert(translations[currentLang].enterNameAlert);
@@ -648,7 +822,7 @@ function generateCharacter() {
 
     document.querySelector(".setup-box").classList.add("hidden");
     document.querySelector(".card").classList.remove("hidden");
-    const raceData = races.find(r => r.name === race) || { bonus: {} };
+    const raceData = races.find(r => r.name?.english === raceValue) || { bonus: {} };
     const bonus = raceData.bonus || {};
 
     const role = randomItem(roles);
@@ -667,16 +841,19 @@ function generateCharacter() {
         characterTitles
     );
 
+    const avgLevel = Math.round((strength + health + mana + agility) / 4);
     const character = {
         playerName,
         guildName,
-        race,
-        raceDescription: getRaceDescription(race),
+        race: raceData,
+        raceDescription: getRaceDescription(raceData),
         role,
         strength,
         health,
         mana,
         agility,
+        level: avgLevel,
+        rarity: overallRank,
         characterSkills,
         characterTitles,
         overallRank
@@ -684,6 +861,7 @@ function generateCharacter() {
 
     currentCharacter = character;
     renderCharacter(character);
+    showStatusCard();
 
     if (["S", "SS", "SSS"].includes(overallRank)) {
         triggerRankEffect(overallRank);
@@ -734,10 +912,6 @@ function rerollTitles() {
     }
 }
 
-// =======================
-// RANDOM
-// =======================
-
 function randomStat() {
     return Math.floor(Math.random() * 100) + 1;
 }
@@ -746,61 +920,36 @@ function randomItem(array) {
     return array[Math.floor(Math.random() * array.length)];
 }
 
-// =======================
-// SKILL
-// =======================
-
-// =======================
-// SKILL
-// =======================
-
 function generateSkills() {
-
     const amount = Math.floor(Math.random() * 7) + 1;
-
     let selected = [];
-
     while (selected.length < amount) {
-
         const candidate = randomItem(skills);
-
-        // ensure uniqueness by skill name and store the name string
-        if (!selected.some(s => s.name === candidate)) {
+        if (!selected.some(s => s.english === candidate.english)) {
             selected.push({
-                name: candidate,
+                ...candidate,
                 rank: weightedRank()
             });
         }
     }
-
     return selected;
 }
 
-
-// =======================
-// TITLE
-// =======================
 
 function generateTitles() {
     const amount = Math.floor(Math.random() * 4) + 1;
     const selected = [];
-
     while (selected.length < amount) {
         const candidate = randomItem(titles);
-        if (!selected.some(t => t.name === candidate)) {
+        if (!selected.some(t => t.english === candidate.english)) {
             selected.push({
-                name: candidate,
+                ...candidate,
                 rank: weightedRank()
             });
         }
     }
-
     return selected;
 }
-
-// =======================
-// SCORE
-// =======================
 
 const scoreMap = {
     F: 5,
@@ -855,10 +1004,6 @@ function calculateOverallRank(
     return "F";
 }
 
-
-// =======================
-// RANK EFFECTS
-// =======================
 
 let particleEmitterId = null;
 
@@ -948,21 +1093,13 @@ function createParticles(type) {
     }
 }
 
-// =======================
-// RENDER
-// =======================
-
 function renderCharacter(character) {
 
-    document.getElementById("displayName").textContent =
-        character.playerName;
-
-    document.getElementById("displayGuild").textContent =
-        character.guildName;
-
-    document.getElementById("displayRace").textContent = character.race;
+    document.getElementById("displayName").textContent = character.playerName;
+    document.getElementById("displayGuild").textContent = character.guildName;
+    document.getElementById("displayRace").textContent = getRaceDisplay(character.race);
     document.getElementById("displayRaceDesc").textContent = character.raceDescription || "-";
-    document.getElementById("displayRole").textContent = translateRole(character.role);
+    document.getElementById("displayRole").textContent = getRoleDisplay(character.role);
 
     document.getElementById("strength").textContent = character.strength;
     document.getElementById("strengthBar").style.width = `${calculateStatWidth(character.strength)}%`;
@@ -1008,10 +1145,10 @@ function renderCharacter(character) {
             <li class="ranked-line">
                 <div class="item-left">
                     <div class="item-icon">
-                        <img src="${getSkillIcon(skill.name)}" alt="Skill icon" />
+                        <img src="${getSkillIcon(skill.english)}" alt="Skill icon" />
                     </div>
                     <div class="item-label">
-                        ${translateSkillName(skill.name)}
+                        ${getSkillDisplay(skill)}
                         <div class="rank-bars ${rankColorClass(skill.rank)}">${generateRankBars(skill.rank)}</div>
                     </div>
                 </div>
@@ -1032,10 +1169,10 @@ function renderCharacter(character) {
             <li class="ranked-line">
                 <div class="item-left">
                     <div class="item-icon">
-                        <img src="${getTitleIcon(title.name)}" alt="Title icon" />
+                        <img src="${getTitleIcon(title.english)}" alt="Title icon" />
                     </div>
                     <div class="item-label">
-                        ${translateTitleName(title.name)}
+                        ${getTitleDisplay(title)}
                         <div class="rank-bars ${rankColorClass(title.rank)}">${generateRankBars(title.rank)}</div>
                     </div>
                 </div>
@@ -1045,8 +1182,62 @@ function renderCharacter(character) {
     });
 }
 
+function buildWinrateMatrix() {
+    const ranks = ["SSS", "SS", "S", "A", "B", "C", "D", "F"];
+    const matrix = {};
+
+    const scoreMap = {
+        "SSS": 7,
+        "SS": 6,
+        "S": 5,
+        "A": 4,
+        "B": 3,
+        "C": 2,
+        "D": 1,
+        "F": 0,
+    };
+
+    ranks.forEach(player => {
+        matrix[player] = {};
+        ranks.forEach(opponent => {
+            const diff = scoreMap[player] - scoreMap[opponent];
+            let winrate;
+
+            if (diff >= 3) winrate = 95;
+            else if (diff === 2) winrate = 82;
+            else if (diff === 1) winrate = 68;
+            else if (diff === 0) winrate = 50;
+            else if (diff === -1) winrate = 32;
+            else if (diff === -2) winrate = 18;
+            else winrate = 5;
+
+            matrix[player][opponent] = winrate;
+        });
+    });
+
+    return { ranks, matrix };
+}
+
+function renderWinrateTable() {
+    if (!winrateTable) return;
+
+    const { ranks, matrix } = buildWinrateMatrix();
+    const headerCells = [`<th>${translations[currentLang].winrateTitle}</th>`].concat(ranks.map(rank => `<th>${rank}</th>`)).join("");
+
+    const rows = ranks.map(player => {
+        const cells = ranks.map(opponent => `<td>${matrix[player][opponent]}%</td>`).join("");
+        return `<tr><th>${player}</th>${cells}</tr>`;
+    }).join("");
+
+    winrateTable.innerHTML = `
+        <thead><tr>${headerCells}</tr></thead>
+        <tbody>${rows}</tbody>
+    `;
+}
+
 function getSkillIcon(name) {
-    const lower = name.toLowerCase();
+    const value = typeof name === "string" ? name : name?.english || name?.name?.english || "";
+    const lower = value.toLowerCase();
 
     if (/magic|mana|summoning|healing|barrier|curse|soul|spirit|time|space|gravity/.test(lower)) return "assets/Icon/Skill_Magic.png";
     if (/sword|dual wield|shield|axe|spear|bow|gun|weapon|martial|critical|berserk|parry|counter|battle|combo|last stand/.test(lower)) return "assets/Icon/Skill_Combat.png";
@@ -1062,7 +1253,8 @@ function getSkillIcon(name) {
 }
 
 function getTitleIcon(name) {
-    const lower = name.toLowerCase();
+    const value = typeof name === "string" ? name : name?.english || name?.name?.english || "";
+    const lower = value.toLowerCase();
 
     if (/mage|magic|archmage|divine|dark|time|reality|chosen by mana|lord of darkness|reality bender|forbidden mage|cursed/.test(lower)) return "assets/Icon/Title_Magic.png";
     if (/king|prince|emperor|ruler|monarch|chosen one|hero of light|royal/.test(lower)) return "assets/Icon/Title_Royal.png";

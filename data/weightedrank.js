@@ -1,7 +1,4 @@
-// =======================
-// RANK WEIGHT
-// =======================
-
+// Rank weight calculation with percentage distribution
 function weightedRank() {
 
     const roll = Math.random() * 100;

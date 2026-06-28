@@ -63,6 +63,24 @@
                 <span class="btn-star star-3">★</span>
             </button>
 
+            <div class="input-group">
+                <label id="labelSaveCode">Save Code</label>
+                <div class="input-field">
+                    <div class="input-icon"><img src="assets/Icon/Code.png" alt="Save code icon"></div>
+                    <input
+                        type="text"
+                        id="saveCodeInput"
+                        placeholder="Enter save code">
+                </div>
+            </div>
+
+            <button id="loadCodeBtn" class="load-character-btn">
+        <span class="btn-icon">&lt;&gt;</span>
+                <span class="btn-star star-1">★</span>
+                <span class="btn-star star-2">★</span>
+                <span class="btn-star star-3">★</span>
+            </button>
+
             <div class="lang-switch">
                 <button type="button" id="btnEnglish" class="lang-btn active">English</button>
                 <button type="button" id="btnIndonesian" class="lang-btn">Indonesia</button>
@@ -203,9 +221,48 @@
 
                 </ul>
             </div>
-            <p class="status-footer-link"><a href="https://aldkusm.github.io/Create-Character/" target="_blank" rel="noopener noreferrer">aldkusm.github.io/Create-Character/</a></p>
-        </div>
 
+            <p class="status-footer-link"><a href="https://aldkusm.github.io/Create-Character/" target="_blank" rel="noopener noreferrer">aldkusm.github.io/Create-Character/</a></p>
+
+            <div class="save-code-box">
+                <div class="save-code-header">
+                    <span>Save Character Code</span>
+                    <button type="button" id="saveCodeBtn">Generate & Copy</button>
+                </div>
+                <p class="save-note" id="saveNote">Tekan tombol untuk menghasilkan dan menyalin kode.</p>
+            </div>
+
+            <div class="battle-code-box">
+                <div class="save-code-header">
+                    <span id="battleCodeLabel">Opponent Battle Code</span>
+                    <div class="battle-action-buttons">
+                        <button type="button" id="battleCodeBtn" class="battle-code-btn">
+                            <span class="btn-label" id="battleCodeBtnLabel">Battle</span>
+                        </button>
+                        <button type="button" id="resetBattleBtn" class="reset-battle-btn">Reset</button>
+                    </div>
+                </div>
+                <div class="battle-code-field">
+                    <input type="text" id="battleCodeInput" placeholder="Enter opponent code" />
+                </div>
+                <p class="save-note" id="battleCodeNote">Enter opponent code to start battle.</p>
+                <div class="battle-log-controls">
+                    <span class="log-count-label" id="logCountLabel">Log Count</span>
+                    <div class="log-count-buttons">
+                        <button type="button" class="log-count-btn active" data-count="10">10</button>
+                        <button type="button" class="log-count-btn" data-count="20">20</button>
+                        <button type="button" class="log-count-btn" data-count="50">50</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="battle-log-box hidden" id="battleLogBox">
+                <div class="battle-log-header">
+                    <span id="battleLogsTitle">Battle Logs</span>
+                </div>
+                <div class="battle-log-list" id="battleLogContainer"></div>
+            </div>
+        </div>
 
     </div>
 
@@ -214,6 +271,12 @@
     <script src="data/skills.js"></script>
     <script src="data/titles.js"></script>
     <script src="data/weightedrank.js"></script>
+    <script src="data/save.js"></script>
+    <script src="data/attacklogs.js"></script>
+    <script src="data/defenselogs.js"></script>
+    <script src="data/dodglogs.js"></script>
+    <script src="data/winlogs.js"></script>
+    <script src="data/loselogs.js"></script>
     <script src="script.js"></script>
 
 </body>
