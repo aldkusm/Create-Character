@@ -321,9 +321,6 @@ body::before{
         font-size: 13px;
     }
 
-    body::before {
-        filter: none !important;
-    }
 }
 
 @keyframes gradientShift{
@@ -1904,6 +1901,27 @@ hr{
     padding:10px 12px;
     line-height:1.4;
     animation:battleLogFadeIn 0.35s ease-out;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.battle-log-icon{
+    min-width:16px;
+    font-size:16px;
+    font-weight:bold;
+}
+
+.battle-log-text{
+    flex:1;
+}
+
+.battle-log-type{
+    font-size:11px;
+    color:rgba(255,255,255,0.6);
+    font-weight:600;
+    text-transform:lowercase;
+    white-space:nowrap;
 }
 
 @keyframes battleLogFadeIn {
@@ -2010,6 +2028,9 @@ hr{
     border-radius:14px;
     padding:10px 12px;
     line-height:1.4;
+    display:flex;
+    align-items:center;
+    gap:8px;
 }
 
 .winrate-box{
@@ -2242,7 +2263,7 @@ hr{
 
 @media (max-width: 640px) {
     body::before {
-        filter: none;
+        filter: blur(4px);
         opacity: 0.65;
     }
 
@@ -2270,7 +2291,7 @@ hr{
     }
 
     .card {
-        backdrop-filter: none;
+        backdrop-filter: blur(10px);
         box-shadow: 0 0 16px rgba(0,0,0,0.25);
     }
 

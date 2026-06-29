@@ -534,13 +534,22 @@ function generateBattleLogs(opponent, outcome, customCount = getLogCount(), lang
 
     for (let i = 0; i < count - 1; i++) {
         const actor = i % 2 === 0 ? firstActor : secondActor;
-        const pool = [attackPool, defensePool, dodgePool][Math.floor(Math.random() * 3)];
+        const rand = Math.floor(Math.random() * 3);
+        let type = "attack";
+        let pool = attackPool;
+        if (rand === 1) {
+            type = "defense";
+            pool = defensePool;
+        } else if (rand === 2) {
+            type = "dodge";
+            pool = dodgePool;
+        }
         const template = pool[Math.floor(Math.random() * pool.length)];
         const skill = actor.skills.length > 0
             ? actor.skills[Math.floor(Math.random() * actor.skills.length)]
             : null;
         const line = formatBattleLine(template, actor.name, actor.title, getSkillDisplayName(skill, lang));
-        logLines.push(line);
+        logLines.push({ text: line, type: type, isPlayer: actor.isPlayer });
     }
 
     const finalActor = ((count - 1) % 2 === 0) ? firstActor : secondActor;
@@ -556,7 +565,8 @@ function generateBattleLogs(opponent, outcome, customCount = getLogCount(), lang
         ? finalActor.skills[Math.floor(Math.random() * finalActor.skills.length)]
         : null;
     const finalLine = formatBattleLine(finalTemplate, finalActor.name, finalActor.title, getSkillDisplayName(finalSkill, lang));
-    logLines.push(finalLine);
+    const finalType = finalResultForActor === "win" ? "win" : "lose";
+    logLines.push({ text: finalLine, type: finalType, isPlayer: finalActor.isPlayer });
 
     return logLines;
 }
@@ -577,9 +587,30 @@ async function renderBattleLogs(lines) {
     for (let index = 0; index < lines.length; index++) {
         if (renderId !== battleLogRenderToken) break;
 
+        const logData = lines[index];
         const node = document.createElement("div");
         node.className = "battle-log-line";
-        node.textContent = `[${formatBattleLogTimestamp(index * 2)}] ${lines[index]}`;
+        
+        // Create icon element with color based on player/opponent
+        const iconEl = document.createElement("span");
+        iconEl.className = "battle-log-icon";
+        iconEl.textContent = "●";
+        iconEl.style.color = logData.isPlayer ? "#3b82f6" : "#ef4444";
+        
+        // Create text element
+        const textEl = document.createElement("span");
+        textEl.className = "battle-log-text";
+        textEl.textContent = logData.text;
+        
+        // Create type label
+        const labelEl = document.createElement("span");
+        labelEl.className = "battle-log-type";
+        labelEl.textContent = `(${logData.type})`;
+        
+        node.appendChild(iconEl);
+        node.appendChild(textEl);
+        node.appendChild(labelEl);
+        
         battleLogContainer.insertBefore(node, battleLogContainer.firstChild);
         battleLogContainer.scrollTop = 0;
         node.animate([
