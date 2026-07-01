@@ -85,6 +85,7 @@
                 <button type="button" id="btnEnglish" class="lang-btn active">English</button>
                 <button type="button" id="btnIndonesian" class="lang-btn">Indonesia</button>
             </div>
+            <button type="button" id="tutorialLaunchBtn" class="tutorial-launch-btn">Tutorial</button>
 
         </div>
 
@@ -266,6 +267,24 @@
 
     </div>
 
+    <div id="tutorialPopup" class="tutorial-popup hidden">
+        <div class="tutorial-popup-overlay"></div>
+        <div class="tutorial-popup-content">
+            <div class="tutorial-popup-header">
+                <h2 id="tutorialTitle"></h2>
+                <button type="button" id="tutorialCloseBtn" class="tutorial-close-btn" aria-label="Close tutorial">×</button>
+            </div>
+            <div id="tutorialBody" class="tutorial-body"></div>
+            <div class="tutorial-actions">
+                <label class="tutorial-checkbox">
+                    <input type="checkbox" id="tutorialCheckbox">
+                    <span id="tutorialCheckboxText"></span>
+                </label>
+                <button type="button" id="tutorialButton" class="tutorial-start-btn"></button>
+            </div>
+        </div>
+    </div>
+
     <script src="data/races.js"></script>
     <script src="data/roles.js"></script>
     <script src="data/skills.js"></script>
@@ -277,6 +296,7 @@
     <script src="data/dodglogs.js"></script>
     <script src="data/winlogs.js"></script>
     <script src="data/loselogs.js"></script>
+    <script src="data/tutorial.js"></script>
     <script src="script.js"></script>
 
 </body>

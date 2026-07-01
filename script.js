@@ -25,6 +25,7 @@ const winrateTable = document.getElementById("winrateTable");
 const winrateNote = document.getElementById("winrateNote");
 const btnEnglish = document.getElementById("btnEnglish");
 const btnIndonesian = document.getElementById("btnIndonesian");
+const tutorialLaunchBtn = document.getElementById("tutorialLaunchBtn");
 const setupTitle = document.getElementById("setupTitle");
 const setupSubtitle = document.getElementById("setupSubtitle");
 const labelCharacterName = document.getElementById("labelCharacterName");
@@ -48,6 +49,11 @@ const titleTitle = document.getElementById("titleTitle");
 const gachaLabel = document.getElementById("gachaLabel");
 const rerollSkillsLabel = rerollSkillsBtn;
 const rerollTitlesLabel = rerollTitlesBtn;
+const tutorialPopup = document.getElementById("tutorialPopup");
+const tutorialButton = document.getElementById("tutorialButton");
+const tutorialCheckbox = document.getElementById("tutorialCheckbox");
+const tutorialCloseBtn = document.getElementById("tutorialCloseBtn");
+const tutorialOverlay = document.querySelector(".tutorial-popup-overlay");
 
 let currentCharacter = null;
 let currentLang = "english";
@@ -89,6 +95,7 @@ const translations = {
         saveCodePlaceholder: "Character code will appear here",
         saveCodeNote: "Tap the button to copy the code.",
         saveCodeCopied: "Character code copied!",
+        tutorialButtonLabel: "Tutorial",
         saveCodeInputEmpty: "Please enter a save code.",
         saveCodeInvalid: "Invalid save code.",
         saveCodeLoaded: "Character loaded.",
@@ -152,6 +159,7 @@ const translations = {
         saveCodePlaceholder: "Kode karakter akan muncul di sini",
         saveCodeNote: "Ketuk tombol untuk menyalin kode.",
         saveCodeCopied: "Kode karakter disalin!",
+        tutorialButtonLabel: "Tutorial",
         saveCodeInputEmpty: "Masukkan kode karakter.",
         saveCodeInvalid: "Kode karakter tidak valid.",
         saveCodeLoaded: "Karakter dimuat.",
@@ -235,8 +243,12 @@ saveCodeBtn?.addEventListener("click", saveCharacterCode);
 loadCodeBtn?.addEventListener("click", startLoadAnimation);
 btnEnglish?.addEventListener("click", () => setLanguage("english"));
 btnIndonesian?.addEventListener("click", () => setLanguage("indonesian"));
+tutorialLaunchBtn?.addEventListener("click", () => showTutorial(currentLang === "indonesian" ? "id" : "en"));
 battleCodeBtn?.addEventListener("click", startBattle);
 resetBattleBtn?.addEventListener("click", resetBattle);
+tutorialButton?.addEventListener("click", closeTutorialPopup);
+tutorialCloseBtn?.addEventListener("click", closeTutorialPopup);
+tutorialOverlay?.addEventListener("click", closeTutorialPopup);
 logCountButtons.forEach(button => {
     button.addEventListener("click", () => {
         logCountButtons.forEach(btn => btn.classList.remove("active"));
@@ -247,6 +259,7 @@ logCountButtons.forEach(button => {
 populateRaceOptions();
 setGachaBtnDefault();
 setLanguage(currentLang);
+maybeShowTutorial();
 
 function setGachaBtnDefault() {
     const labelText = translations[currentLang]?.gachaLabel || "Gacha Character";
@@ -292,6 +305,33 @@ function setLoadBtnLoading() {
         <span class="btn-star star-2">★</span>
         <span class="btn-star star-3">★</span>
     `;
+}
+
+function isTutorialDisabled() {
+    try {
+        return localStorage.getItem("tutorialDismissed") === "true";
+    } catch {
+        return false;
+    }
+}
+
+function closeTutorialPopup() {
+    if (!tutorialPopup) return;
+    tutorialPopup.classList.remove("show");
+    tutorialPopup.classList.add("hidden");
+    if (tutorialCheckbox?.checked) {
+        try {
+            localStorage.setItem("tutorialDismissed", "true");
+        } catch {
+            // ignore storage errors
+        }
+    }
+}
+
+function maybeShowTutorial() {
+    if (isTutorialDisabled()) return;
+    const lang = currentLang === "indonesian" ? "id" : "en";
+    showTutorial(lang);
 }
 
 function showStatusCard() {
@@ -386,6 +426,7 @@ function setLanguage(lang) {
         if (loadLabel) loadLabel.textContent = translations[lang].loadCodeButton;
     }
     if (saveNote) saveNote.textContent = translations[lang].saveCodeNote;
+    if (tutorialLaunchBtn) tutorialLaunchBtn.textContent = translations[lang].tutorialButtonLabel;
     document.getElementById("charName").placeholder = translations[lang].placeholderCharacterName;
     document.getElementById("guildName").placeholder = translations[lang].placeholderGuildName;
     btnEnglish.classList.toggle("active", lang === "english");
